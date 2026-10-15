@@ -2,4 +2,4 @@
 1
 2
 3
-p nbinreg Maximum-likelihood Negative Binomial regression with robust and cluster options Use nbinreg With STATA 19
+p xtdpdqml Quasi-maximum likelihood linear dynamic panel-data estimation Use xtdpdqml With STATA 19
