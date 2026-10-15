@@ -1,7 +1,0 @@
-D 'xtdpdqml': Quasi-maximum likelihood linear dynamic panel-data estimation Use xtdpdqml With STATA 19
-D
-F xtdpdqml.ado
-F xtdpdqml.sthlp
-F xtdpdqml_p.ado
-F xtdpdqml_estat.ado
-F xtdpdqml_postestimation.sthlp
