@@ -2,4 +2,4 @@
 1
 2
 3
-p ocmt One Covariate at a Time Multiple Testing (OCMT) Use ocmt With STATA 19
+p xtdpdqml Quasi-maximum likelihood linear dynamic panel-data estimation Use xtdpdqml With STATA 19
