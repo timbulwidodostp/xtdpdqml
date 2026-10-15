@@ -1,4 +1,4 @@
-*! version 1.3.1  08aug2016
+*! version 1.4.3  26feb2017
 *! Sebastian Kripfganz, www.kripfganz.de
 
 *==================================================*
@@ -6,9 +6,9 @@
 
 *** citation ***
 
-/*	Kripfganz, S. (2016).
-	xtdpdqml: Quasi-maximum likelihood estimation of linear dynamic short-T panel data models.
-	Accepted for publication in the Stata Journal.		*/
+/*	Kripfganz, S. 2016.
+	Quasi-maximum likelihood estimation of linear dynamic short-T panel-data models.
+	Stata Journal 16: 1013-1038.		*/
 
 *** version history at the end of the file ***
 
@@ -42,6 +42,7 @@ program define xtdpdqml, eclass prop(xt)
 		eret loc ml_method	"`method'"
 		eret loc model		"`model'"
 		eret loc predict	"xtdpdqml_p"
+		eret loc estat_cmd	"xtdpdqml_estat"
 		eret loc tvar		"`_dta[_TStvar]'"
 		eret loc ivar		"`_dta[_TSpanel]'"
 		eret loc cmdline 	`"xtdpdqml `0'"'
@@ -325,8 +326,13 @@ program define xtdpdqml_fe, eclass sort
 	eret sca g_max		= `T_max'
 	if `mlparams' {
 		eret sca k_aux		= 2
-		eret sca k_eq		= 4
-		eret hidden loc diparm_opt4 "noprob"
+		if `: word count `dtvindepvars0'' > 0 {
+			eret sca k_eq		= 4
+			eret hidden loc diparm_opt4 "noprob"
+		}
+		else {
+			eret sca k_eq		= 3
+		}
 		eret hidden loc diparm_opt3 "noprob"
 	}
 	else {
@@ -495,18 +501,26 @@ program define xtdpdqml_re, eclass sort
 	}
 
 	if "`initval'" == "" {
-		loc sigma2u			= .
+//		if "`initnoeffects'" == "" {
+			loc sigma2u			= .
+			loc phi				= .
+//		}
+//		else {
+//			loc sigma2u			= 0
+//			loc phi				= 0
+//		}
 		loc sigma2e			= .
 		loc sigma2e0		= .
-		loc phi				= .
 	}
 	else {
+//		if "`initnoeffects'" != "" {
+//			di as err "options initval() and initnoeffects may not be combined"
+//			exit 184
+//		}
 		loc sigma2u			: word 1 of `initval'
 		if `sigma2u' <= 0 {
-			if `sigma2u' < 0 | "`effects'" == "" {
-				di as err "initval() invalid -- invalid numlist has elements outside of allowed range"
-				exit 125
-			}
+			di as err "initval() invalid -- invalid numlist has elements outside of allowed range"
+			exit 125
 		}
 		if `: word count `initval'' >= 2 {
 			loc sigma2e			: word 2 of `initval'
@@ -542,7 +556,7 @@ program define xtdpdqml_re, eclass sort
 	if "`constant'" == "" {
 		loc indepvars		"`indepvars' `ltouse'"
 	}
-	
+
 	*--------------------------------------------------*
 	*** estimation ***
 	mata: xtdpdqml_re_est(	"`depvar'",										/// dependent variable
@@ -618,8 +632,13 @@ program define xtdpdqml_re, eclass sort
 	eret sca g_max		= `T_max'
 	if `mlparams' {
 		eret sca k_aux		= 4
-		eret sca k_eq		= 6
-		eret hidden loc diparm_opt6 "noprob"
+		if `: word count `indepvars0'' > 0 {
+			eret sca k_eq		= 6
+			eret hidden loc diparm_opt6 "noprob"
+		}
+		else {
+			eret sca k_eq		= 5
+		}
 		eret hidden loc diparm_opt5 "noprob"
 		eret hidden loc diparm_opt4 "noprob"
 		eret hidden loc diparm_opt3 "noprob"
@@ -1022,6 +1041,10 @@ end
 
 *==================================================*
 *** version history ***
+* version 1.4.3  26feb2017  estat serial now reports Arellano-Bond test; bug fixed in models without variables in the initial-observations equation
+* version 1.4.2  14feb2017  covariance between constant term and other coefficients in FE model corrected
+* version 1.4.1  12feb2017  option initnoeffects removed because of corner solution trap
+* version 1.4.0  14jan2017  option initnoeffects added; postestimation command estat serial added
 * version 1.3.1  08aug2016  Stata Journal version; degrees-of-freedom adjustment removed for standard error of the constant in FE model and initial variance estimates
 * version 1.3.0  22may2016  xtdpd options lgmmiv() and twostep removed for initial GMM estimates; improved collinearity checks; projection() with subobtion nodifference adds further lag; additional display options
 * version 1.2.4  04feb2016  improved help files

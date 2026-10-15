@@ -1,4 +1,4 @@
-*! version 1.3.1  08aug2016
+*! version 1.4.3  26feb2017
 *! Sebastian Kripfganz, www.kripfganz.de
 
 *==================================================*
@@ -6,9 +6,9 @@
 
 *** Citation ***
 
-/*	Kripfganz, S. (2016).
-	xtdpdqml: Quasi-maximum likelihood estimation of linear dynamic short-T panel data models.
-	Accepted for publication in the Stata Journal.		*/
+/*	Kripfganz, S. 2016.
+	Quasi-maximum likelihood estimation of linear dynamic short-T panel-data models.
+	Stata Journal 16: 1013-1038.		*/
 
 program define xtdpdqml_p, sort
 	version 12.1
@@ -123,7 +123,7 @@ program define xtdpdqml_p_scores, rclass
 		if "`e(model)'" == "fe" {
 			mata: xtdpdqml_score(	"`e'",												///
 									"`tmp'",											///
-									"`_dta[_TSpanel]'",									///
+									"`e(ivar)'",										///
 									"`smpl'",											///
 									(`= _b[_sigma2e:_cons]', `= _b[_omega:_cons]'),		///
 									"`eq'")
@@ -131,7 +131,7 @@ program define xtdpdqml_p_scores, rclass
 		else {
 			mata: xtdpdqml_re_score("`e'",																								///
 									"`tmp'",																							///
-									"`_dta[_TSpanel]'",																					///
+									"`e(ivar)'",																						///
 									"`smpl'",																							///
 									(`= _b[_sigma2u:_cons]', `= _b[_sigma2e:_cons]', `= _b[_sigma2e0:_cons]', `= _b[_phi:_cons]'),		///
 									"`eq'")
