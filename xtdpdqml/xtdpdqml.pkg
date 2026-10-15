@@ -1,0 +1,5 @@
+D 'nbinreg': Maximum-likelihood Negative Binomial regression with robust and cluster options Use nbinreg With STATA 19
+D
+F nbinreg.ado
+F nbinlf.ado
+F nbinreg.hlp
